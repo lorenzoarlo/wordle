@@ -4,16 +4,16 @@
     --primary-bg-clr: #121213;
     --secondary-bg-clr: #3a3a3c;
     --key-bg-clr: #818384;
-    
+
     --fg-clr: #fff;
     --hover-fg-clr: #000;
-    
+
     --tile-with-text-clr: #565758;
-    
+
     --tile-width: unset;
-    
+
     --alert-fg-clr: #000;
-    --alert-bg-clr: #ffffff95; 
+    --alert-bg-clr: #ffffff95;
 }
 
 * {
@@ -25,14 +25,39 @@ html,
 body {
     width: 100%;
     height: 100%;
-    
+
     margin: 0;
-    
+
     font-family: "Roboto Mono", monospace;
     font-size: 12px;
     overflow: hidden;
 
     background-color: var(--primary-bg-clr);
+}
+
+/* -> hover media query */
+
+@media (hover: hover) {
+    .settings-button:hover {
+        transition-duration: 500ms;
+        transform: rotate(180deg) scale(1.1);
+        cursor: pointer;
+    }
+
+    .keyboard-key:hover {
+        font-size: 1.2em;
+    }
+
+    .keyboard-key:hover .material-symbols-outlined {
+        transform: scale(1.2);
+    }
+
+    .keyboard-key:hover,
+    .keyboard-key:hover .material-symbols-outlined {
+        transition-duration: 500ms;
+        color: var(--hover-fg-clr);
+        cursor: pointer;
+    }
 }
 
 /* -> outer container  */
@@ -68,7 +93,6 @@ body {
     text-align: center;
 }
 
-
 .logo {
     max-height: 4em;
 }
@@ -101,7 +125,7 @@ body {
 
 .body-container {
     height: 100%;
-    
+
     position: relative;
     top: 0;
     left: 0;
@@ -114,16 +138,16 @@ body {
     align-content: stretch;
     flex-flow: column nowrap;
     gap: 1em;
-
 }
 
 .board-container {
     height: 100%;
 
     display: grid;
-
     grid-gap: 5px;
 }
+
+/* -> tiles */
 
 .tile {
     font-size: calc(var(--tile-width) * 0.5);
@@ -132,43 +156,61 @@ body {
     height: 100%;
     min-width: 0;
     min-height: 0;
-    grid-row: 1 / 1 span;
-    grid-column: 1 / 1 span;
+
     display: flex;
-    
     align-items: center;
     align-content: center;
     justify-content: center;
+
+    border: 3px solid;
 }
 
 .tile-with-text {
-    border: 3px solid var(--tile-with-text-clr);
     color: var(--fg-clr);
+
+    border-color: var(--tile-with-text-clr);
     animation: tile-pulse-out 50ms linear;
 }
 
 .tile-without-text {
-    border: 3px solid var(--secondary-bg-clr);
     color: transparent;
+
+    border-color: var(--secondary-bg-clr);
     animation: tile-pulse-in 50ms linear;
 }
 
 @keyframes tile-pulse-out {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes tile-pulse-in {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.8); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.8);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
+/* -> keyboard */
 
 .keyboard-container {
-    width: 90vw;
-    max-width: var(--max-game-width);
+    align-self: stretch;
 
     display: flex;
     justify-content: stretch;
@@ -186,7 +228,7 @@ body {
     justify-content: center;
     align-items: stretch;
     align-content: stretch;
-    flex-direction: row;
+    flex-flow: row nowrap;
 }
 
 .keyboard-row,
@@ -195,7 +237,7 @@ body {
 }
 
 .keyboard-key {
-    max-width: 5rem;
+    max-width: 3.5rem;
     height: 3.5rem;
 
     background-color: var(--key-bg-clr);
@@ -215,33 +257,8 @@ body {
 }
 
 .keyboard-key-more-span {
-    max-width: 7.5rem;
+    max-width: 5rem;
     flex: 2 0 auto;
-}
-
-
-@media (hover: hover) {
-    .settings-button:hover {
-        transition-duration: 500ms;
-        transform: rotate(180deg) scale(1.1);
-        cursor: pointer;
-    }
-    
-    
-    .keyboard-key:hover {
-        font-size: 1.2em;
-    }
-    
-    .keyboard-key:hover .material-symbols-outlined {
-        transform: scale(1.2);
-    }
-    
-    .keyboard-key:hover,
-    .keyboard-key:hover .material-symbols-outlined {
-        transition-duration: 500ms;
-        color: var(--hover-fg-clr);
-        cursor: pointer;
-    }
 }
 
 .alerts-container {
@@ -264,15 +281,19 @@ body {
     gap: 1em;
 }
 
-
 .alert {
+    width: 20em;
+    max-width: 50vw;
+    z-index: 2;
+
     background-color: var(--alert-bg-clr);
     color: var(--alert-fg-clr);
-    
-    border-radius: 10px;
-
-    max-width: 50vw;
-    padding: 1em 2em;
-
     font-weight: 900;
+
+    padding: 1em 2em;
+    border-radius: 10px;
+    
+    text-align: center;
+    white-space: nowrap;
+    
 }
