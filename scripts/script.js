@@ -7,16 +7,20 @@ function getParams() {
     let result = {
         "nLettere": nLettere,
         "nRighe": -1,
-        "wordGoal": getWord(nLettere),
+        "wordGoal": null,
         "cursoreRiga": 0,
-        "cursoreColonna": 0
+        "cursoreColonna": 0,
+        "onanimation": false,
+        "wordsList": []
     };
     result['nRighe'] = result['nLettere'] + 1;
     return result;
 };
 
-function getWord(a) {
-    return "crema";
+async function getWord(nLettere) {
+    WORDS_LIST_PATH = "../resources/words.json";
+    PARAMS['wordsList'] = await fetch(WORDS_LIST_PATH).then(r => r.json());
+    PARAMS['wordGoal'] = PARAMS['wordsList'][Math.round(Math.random() * PARAMS['wordsList'].length)];
 }
 
 function getTile(content) {
@@ -53,14 +57,31 @@ function summonAlert(message) {
     }, ALERT_TTL);    
 }
 
-function sendKey(key) {
-    if(!KEYBOARD_KEYS.replaceAll('/','').includes(key)) return;
-    
+async function flipTile(tile, className) {
+    const TILE_FLIP_KEYFRAME_PHASE1 = [ { transform: 'rotateX(0deg)' }, { transform: 'rotateX(90deg)' } ];
+    const TILE_FLIP_KEYFRAME_PROPERTIES_PHASE1 = { duration: 200, iterations: 1 };
+
+    const TILE_FLIP_KEYFRAME_PHASE2 = [ { transform: 'rotateX(90deg)' }, { transform: 'rotateX(0deg)' } ];
+    const TILE_FLIP_KEYFRAME_PROPERTIES_PHASE2 = { duration: 200, iterations: 1 };
+
+    return new Promise((resolve) => {
+        let animation_phase1 = tile.animate(TILE_FLIP_KEYFRAME_PHASE1, TILE_FLIP_KEYFRAME_PROPERTIES_PHASE1);
+        animation_phase1.onfinish = () => {
+            tile.classList.add(className);
+            let animation_phase2 = tile.animate(TILE_FLIP_KEYFRAME_PHASE2, TILE_FLIP_KEYFRAME_PROPERTIES_PHASE2);
+            animation_phase2.onfinish = () => resolve();  
+        };
+    });
+}
+
+async function sendKey(key) {
+    if(PARAMS['onanimation'] || !KEYBOARD_KEYS.replaceAll('/','').includes(key)) return;
+    PARAMS['onanimation'] = true;
     switch(key) {
         case '⌫':
             if(PARAMS['cursoreColonna'] === 0) {
                 throwError(tiles[PARAMS['cursoreRiga']], "parola vuota")
-                return;
+                break;
             }
 
             PARAMS['cursoreColonna']--;
@@ -73,13 +94,56 @@ function sendKey(key) {
         case '↩':
             if(PARAMS['cursoreColonna'] !== (PARAMS['nLettere'])) {
                 throwError(tiles[PARAMS['cursoreRiga']])
-                return;
+                break;
             }
+            
+            
+            let wordInserted = '';
+            for(let i = 0; i < PARAMS['nLettere']; i++) {
+                wordInserted += tiles[PARAMS['cursoreRiga']][i].innerText;
+            }
+            
+            if(!PARAMS['wordsList'].includes(wordInserted)) {
+                throwError(tiles[PARAMS['cursoreRiga']], "non nella lista di parole");
+                break;
+            }
+
+            for(let i = 0; i < PARAMS['nLettere']; i++) {
+                let className = (PARAMS['wordGoal'][i] === wordInserted[i]) ? "tile-correct" : ((PARAMS['wordGoal'].includes(wordInserted[i]))) ? "tile-wrongPlace" : "tile-wrong";
+                await flipTile(tiles[PARAMS['cursoreRiga']][i], className);
+            }
+            
+            
+            const MESSAGES = {
+                "0-guess": "impossibile!",
+                "1-guess": "strabiliante!",
+                "2-guess": "ottimo!",
+                "3-guess": "bene!",
+                "other-guess": "non male!",
+                "last-guess": "appena in tempo!",
+                "fail-guess": "peccato!"
+            };
+            if(PARAMS['wordGoal'] === wordInserted) {
+                
+                if(MESSAGES.hasOwnProperty(`${PARAMS['cursoreRiga']}-guess`)) {
+                    summonAlert(MESSAGES[`${PARAMS['cursoreRiga']}-guess`]);
+                } else if (PARAMS['cursoreRiga'] < PARAMS['nLettere'] - 1) {
+                    summonAlert(MESSAGES['other-guess']);
+                } else if (PARAMS['cursoreRiga'] < PARAMS['nLettere']) {
+                    summonAlert(MESSAGES['last-guess']);
+                }
+            } else if (PARAMS['cursoreRiga'] >= PARAMS['nRighe'] - 1 ) {
+                summonAlert(MESSAGES['fail-guess']);
+            }
+            
+            PARAMS['cursoreRiga']++;
+            PARAMS['cursoreColonna'] = 0;
+
             break;
         default:
             if(PARAMS['cursoreColonna'] > (PARAMS['nLettere'] - 1)) {
                 throwError(tiles[PARAMS['cursoreRiga']])
-                return;
+                break;
             }
 
             let tileSelectedKey = tiles[PARAMS['cursoreRiga']][PARAMS['cursoreColonna']];
@@ -90,6 +154,7 @@ function sendKey(key) {
             PARAMS['cursoreColonna']++;
             break;
     }
+    PARAMS['onanimation'] = false;
 }
 
 function throwError(tiles, alertMessage = null) {
@@ -107,6 +172,9 @@ function throwError(tiles, alertMessage = null) {
 }
 
 const PARAMS = getParams();
+
+
+getWord(null);
 
 const board_container = document.querySelector(".board-container");
 board_container.gridRowsTemplate = `repeat(${PARAMS['nRighe']}, 1fr)`;
@@ -161,7 +229,7 @@ window.onkeydown = (e) => {
     key = (key === "BACKSPACE") ? '⌫' : (key === 'ENTER') ? '↩' : key;
 
     if(!KEYBOARD_KEYS.replaceAll('/', '').includes(key)) return;
-    console.log(key);
+
     sendKey(key);
 }
 

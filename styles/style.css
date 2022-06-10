@@ -3,6 +3,11 @@
 :root {
     --primary-bg-clr: #121213;
     --secondary-bg-clr: #3a3a3c;
+
+    --tile-correct-clr: #538d4e;
+    --tile-wrong-clr: #3a3a3c;
+    --tile-wrongPlace-clr: #b59f3b;
+
     --key-bg-clr: #818384;
 
     --fg-clr: #fff;
@@ -178,6 +183,28 @@ body {
     border-color: var(--secondary-bg-clr);
     animation: tile-pulse-in 50ms linear;
 }
+
+.tile-correct, .tile-wrongPlace, .tile-wrong {
+    animation: tile-flip 500ms linear;
+}
+
+.tile-correct {
+    background-color: var(--tile-correct-clr);
+    border-color: var(--tile-correct-clr);
+}
+
+.tile-wrongPlace {
+    background-color: var(--tile-wrongPlace-clr);
+    border-color: var(--tile-wrongPlace-clr);
+}
+
+.tile-wrong {
+    background-color: var(--tile-wrong-clr);
+    border-color: var(--tile-wrong-clr);
+}
+
+
+
 
 @keyframes tile-pulse-out {
     0% {
