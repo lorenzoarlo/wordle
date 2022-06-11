@@ -16,6 +16,20 @@ function setLanguage(language) {
     }    
 }
 
+function setView(viewName) {
+    let containersList = [
+        "body-container",
+        "settings-container", 
+        // "info-container"
+    ];
+
+    if(!containersList.includes(viewName)) return;
+    for(let c of containersList) {
+        if(c === viewName) document.querySelector(`.${c}`).style.display = "flex";
+        else document.querySelector(`.${c}`).style.display = "none";
+    }
+}
+
 function getParams() {
     const numeroLettereDefault = 5;
     const urlParameters = new URLSearchParams(window.location.search);
@@ -92,20 +106,12 @@ async function flipTile(tile, className) {
     });
 }
 
-function changeView(viewName) {
-    let containersList = [
-        "body-container",
-        "settings-container", 
-        // "info-container"
-    ];
-
-    if(!containersList.includes(viewName)) return;
-    for(let c of containersList) {
-        if(c === viewName) document.querySelector(`.${c}`).style.display = "flex";
-        else document.querySelector(`.${c}`).style.display = "none";
-    }
+function key_animation(keyDiv) {
+    let new_color = getComputedStyle(document.documentElement).getPropertyValue('--hover-fg-clr');
+    const KEYPRESS_KEYFRAME = [ { transform: `scale(1.1)`, color: new_color } ];
+    const KEYPRESS_KEYFRAME_PROPERTIES = { duration: 150, iterations: 1 };
+    keyDiv.animate(KEYPRESS_KEYFRAME, KEYPRESS_KEYFRAME_PROPERTIES);
 }
-
 
 async function sendKey(key) {
     if(PARAMS['onanimation'] || !KEYBOARD_KEYS.replaceAll('/','').includes(key)) return;
@@ -129,7 +135,6 @@ async function sendKey(key) {
                 throwError(tiles[PARAMS['cursoreRiga']])
                 break;
             }
-            
             
             let wordInserted = '';
             for(let i = 0; i < PARAMS['nLettere']; i++) {
@@ -192,7 +197,6 @@ async function sendKey(key) {
 
 function throwError(tiles, alertMessage = null) {
     const SHAKE_PIXELS = 20; 
-
     const SHAKE_TILE_KEYFRAME = [ { transform: `translateX(-${SHAKE_PIXELS}px)` }, { transform: `translateX(${SHAKE_PIXELS}px)` }, { transform: `translateX(0px)` }, ];
     const SHAKE_TILE_KEYFRAME_PROPERTIES = { duration: 150, iterations: 1 };
 
@@ -240,6 +244,7 @@ for(let row of KEYBOARD_KEYS.split('/')) {
         
         const key_div = document.createElement("div");
         key_div.classList.add("keyboard-key");
+        key_div.dataset.char = char;
         
         if(char === '⌫' || char === '↩') {
             key_div.classList.add("keyboard-key-more-span")
@@ -247,8 +252,11 @@ for(let row of KEYBOARD_KEYS.split('/')) {
         } else {
             key_div.innerText = char;
         }
-
-        key_div.onclick = () => sendKey(char); 
+        
+        key_div.onclick = () => {
+            key_animation(key_div);
+            sendKey(char)
+        }; 
 
         keyboard_row_div.appendChild(key_div);
     }
@@ -263,6 +271,8 @@ window.onkeydown = (e) => {
 
     if(!KEYBOARD_KEYS.replaceAll('/', '').includes(key)) return;
 
+
+    key_animation(document.querySelector(`.keyboard-key[data-char='${key}']`))
     sendKey(key);
 }
 

@@ -21,7 +21,7 @@
                 <h1>WORDLE</h1>
                 <h2>by lorenzoarlo</h2>
             </div>
-            <span class="material-symbols-outlined header-title settings-button" onclick="changeView('settings-container');">
+            <span class="material-symbols-outlined header-title settings-button" onclick="setView('settings-container');">
                 settings
             </span>
         </header>
@@ -31,7 +31,7 @@
             <div class="keyboard-container"></div>
         </section>
         <section class="settings-container">
-            <h1 class="settings-title">SETTINGS</h1>
+            <h1 class="settings-title">IMPOSTAZIONI</h1>
             <div class="setting-div">
                 <span class="setting-description">modalità scura</span>
                 <label class="toggle">
@@ -53,6 +53,10 @@
                     <span class="option-value">5</span>
                     <span class="material-symbols-outlined">add</span>
                 </div>
+            </div>
+            <div class="setting-div last">
+                <span class="material-symbols-outlined" onclick="setView('body-container')">arrow_back</span>
+                <span class="setting-description">TORNA AL GIOCO</span>
             </div>
         </section>
     </div>
