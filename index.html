@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#fff">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="resources/logo.png">
     <link rel="stylesheet" href="styles/style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script defer src="scripts/script.js"></script>
     <title>lorenzoarlo's wordle</title>
 </head>
@@ -21,7 +21,7 @@
                 <h1>WORDLE</h1>
                 <h2>by lorenzoarlo</h2>
             </div>
-            <span class="material-symbols-outlined header-title settings-button">
+            <span class="material-symbols-outlined header-title settings-button" onclick="changeView('settings-container');">
                 settings
             </span>
         </header>
@@ -29,6 +29,31 @@
             <div class="alerts-container"></div>
             <div class="board-container"></div>
             <div class="keyboard-container"></div>
+        </section>
+        <section class="settings-container">
+            <h1 class="settings-title">SETTINGS</h1>
+            <div class="setting-div">
+                <span class="setting-description">modalità scura</span>
+                <label class="toggle">
+                    <input type="checkbox" class="original-input-checkbox" id="dark_mode_toggle" onchange="setTheme(dark_mode_toggle.checked);"/>
+                    <span class="round-slider"></span>
+                </label>
+            </div>
+            <div class="setting-div">
+                <span class="setting-description">lingua</span>
+                <div class="setting-options" id="language-option">
+                    <img src="../resources/uk-flag.png" alt="english" class="icon-selectable" data-state='active' onclick="setLanguage('english');"/>
+                    <img src="../resources/italy-flag.png" alt="italian" class="icon-selectable" data-state='inactive' onclick="setLanguage('italian');"/>
+                </div>
+            </div>
+            <div class="setting-div">
+                <span class="setting-description">NUMERO LETTERE</span>
+                <div class="setting-options">
+                    <span class="material-symbols-outlined">remove</span>
+                    <span class="option-value">5</span>
+                    <span class="material-symbols-outlined">add</span>
+                </div>
+            </div>
         </section>
     </div>
 </body>

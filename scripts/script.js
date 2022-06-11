@@ -1,3 +1,21 @@
+function setTheme(dark = false) {
+    if(dark) document.documentElement.classList.add("dark-mode");
+    else document.documentElement.classList.remove("dark-mode");
+    let bg_clr = getComputedStyle(document.documentElement).getPropertyValue('--primary-bg-clr');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content',  bg_clr);
+}
+
+function setLanguage(language) {
+    const language_list = ["english", "italian"];
+
+    if(!language_list.includes(language)) return;
+
+    const images = document.querySelector("#language-option").querySelectorAll(".icon-selectable");
+    for(let i of images) {
+        i.dataset['state'] = (i['alt'] === language) ? "active" : "inactive"; 
+    }    
+}
+
 function getParams() {
     const numeroLettereDefault = 5;
     const urlParameters = new URLSearchParams(window.location.search);
@@ -18,7 +36,7 @@ function getParams() {
 };
 
 async function getWord(nLettere) {
-    WORDS_LIST_PATH = "../resources/words.json";
+    WORDS_LIST_PATH = `${window.location['origin']}${window.location['pathname']}words.json`;
     PARAMS['wordsList'] = await fetch(WORDS_LIST_PATH).then(r => r.json());
     PARAMS['wordGoal'] = PARAMS['wordsList'][Math.round(Math.random() * PARAMS['wordsList'].length)];
 }
@@ -73,6 +91,21 @@ async function flipTile(tile, className) {
         };
     });
 }
+
+function changeView(viewName) {
+    let containersList = [
+        "body-container",
+        "settings-container", 
+        // "info-container"
+    ];
+
+    if(!containersList.includes(viewName)) return;
+    for(let c of containersList) {
+        if(c === viewName) document.querySelector(`.${c}`).style.display = "flex";
+        else document.querySelector(`.${c}`).style.display = "none";
+    }
+}
+
 
 async function sendKey(key) {
     if(PARAMS['onanimation'] || !KEYBOARD_KEYS.replaceAll('/','').includes(key)) return;
@@ -232,6 +265,8 @@ window.onkeydown = (e) => {
 
     sendKey(key);
 }
+
+
 
 window.onResize();
 
