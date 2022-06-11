@@ -36,7 +36,8 @@ function getParams() {
 };
 
 async function getWord(nLettere) {
-    WORDS_LIST_PATH = `${window.location['origin']}${window.location['pathname']}words.json`;
+    // WORDS_LIST_PATH = `${window.location['origin']}${window.location['pathname']}words.json`;
+    WORDS_LIST_PATH = `resources/words.json`;
     PARAMS['wordsList'] = await fetch(WORDS_LIST_PATH).then(r => r.json());
     PARAMS['wordGoal'] = PARAMS['wordsList'][Math.round(Math.random() * PARAMS['wordsList'].length)];
 }
